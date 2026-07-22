@@ -778,3 +778,166 @@ function formatNumber(value) {
     "es-CR"
   ).format(value);
 }
+
+/* ======================================================
+   RENDERIZAR EMPATES POR GRUPO
+====================================================== */
+
+/**
+ * Muestra los partidos empatados organizados por grupo.
+ *
+ * @param {HTMLElement} container Contenedor de resultados.
+ * @param {object} groupedDraws Empates agrupados.
+ * @param {Array} teams Lista de equipos.
+ */
+export function renderDrawsByGroup(
+  container,
+  groupedDraws,
+  teams
+) {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  const groupEntries = Object.entries(
+    groupedDraws ?? {}
+  );
+
+  if (groupEntries.length === 0) {
+    showEmptyCardsState(
+      container,
+      "No se encontraron empates",
+      "No hay partidos finalizados con marcadores iguales."
+    );
+
+    return;
+  }
+
+  groupEntries
+    .sort(([groupA], [groupB]) => {
+      return groupA.localeCompare(groupB);
+    })
+    .forEach(([groupName, games]) => {
+      const groupCard = createDrawGroupCard(
+        groupName,
+        games,
+        teams
+      );
+
+      container.appendChild(groupCard);
+    });
+}
+
+/* ======================================================
+   CREAR TARJETA DE GRUPO
+====================================================== */
+
+/**
+ * Construye una tarjeta con todos los empates de un grupo.
+ *
+ * @param {string} groupName Nombre del grupo.
+ * @param {Array} games Partidos empatados.
+ * @param {Array} teams Lista de equipos.
+ * @returns {HTMLElement} Tarjeta construida.
+ */
+function createDrawGroupCard(
+  groupName,
+  games,
+  teams
+) {
+  const card = document.createElement("article");
+
+  card.className = "draw-group-card";
+
+  const gamesHtml = games
+    .map((game) => {
+      return createDrawMatchHtml(
+        game,
+        teams
+      );
+    })
+    .join("");
+
+  card.innerHTML = `
+    <div class="draw-group-card__header">
+      <div>
+        <p class="draw-group-card__eyebrow">
+          Fase de grupos
+        </p>
+
+        <h3>
+          Grupo ${groupName}
+        </h3>
+      </div>
+
+      <span class="draw-group-card__total">
+        ${games.length}
+        ${games.length === 1 ? "empate" : "empates"}
+      </span>
+    </div>
+
+    <div class="draw-group-card__matches">
+      ${gamesHtml}
+    </div>
+  `;
+
+  return card;
+}
+
+/* ======================================================
+   CREAR PARTIDO EMPATADO
+====================================================== */
+
+/**
+ * Construye el contenido HTML de un partido empatado.
+ *
+ * @param {object} game Datos del partido.
+ * @param {Array} teams Lista de equipos.
+ * @returns {string} Contenido HTML.
+ */
+function createDrawMatchHtml(game, teams) {
+  const homeTeam = findTeamById(
+    teams,
+    game.home_team_id
+  );
+
+  const awayTeam = findTeamById(
+    teams,
+    game.away_team_id
+  );
+
+  const homeScore = Number(
+    game.home_score ?? 0
+  );
+
+  const awayScore = Number(
+    game.away_score ?? 0
+  );
+
+  const formattedDate = formatMatchDate(
+    game.local_date
+  );
+
+  return `
+    <div class="draw-match">
+      <div class="draw-match__teams">
+        <span>${getTeamName(homeTeam)}</span>
+
+        <div class="draw-match__score">
+          <strong>${homeScore}</strong>
+          <span>–</span>
+          <strong>${awayScore}</strong>
+        </div>
+
+        <span>${getTeamName(awayTeam)}</span>
+      </div>
+
+      <div class="draw-match__details">
+        <span>🤝 Marcador igualado</span>
+        <time>${formattedDate}</time>
+      </div>
+    </div>
+  `;
+}
