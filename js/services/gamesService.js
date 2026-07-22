@@ -85,7 +85,17 @@ export function getGamesByTeam(games, teamId) {
  * @returns {Array} Partidos finalizados.
  */
 export function getFinishedGames(games) {
-  return games.filter((game) => game.finished === true);
+  return games.filter((game) => {
+    const finishedValue = String(
+      game.finished ?? ""
+    ).toLowerCase();
+
+    return (
+      finishedValue === "true"
+      || game.time_elapsed === "finished"
+      || game.time_elapsed === "completed"
+    );
+  });
 }
 
 /* ======================================================
