@@ -28,8 +28,15 @@ import {
   showSuccessAlert,
   showWarningAlert,
   showErrorAlert,
+  showOfflineAlert,
   clearAlert
 } from "./ui/alerts.js";
+
+import {
+  saveCache,
+  getCache,
+  CACHE_KEYS
+} from "./utils/cache.js";
 
 /* ======================================================
    ESTADO DE LA APLICACIÓN
@@ -234,6 +241,11 @@ async function loadTeams() {
 
     state.teams = teams;
 
+    saveCache(
+      CACHE_KEYS.TEAMS,
+      state.teams
+    );
+
     populateTeamsSelector(
       teamSelect,
       state.teams
@@ -244,13 +256,36 @@ async function loadTeams() {
       error
     );
 
+    const cachedTeams = getCache(
+      CACHE_KEYS.TEAMS
+    );
+
+    if (
+      Array.isArray(cachedTeams)
+      && cachedTeams.length > 0
+    ) {
+      state.teams = cachedTeams;
+
+      populateTeamsSelector(
+        teamSelect,
+        state.teams
+      );
+
+      showOfflineAlert(
+        alertsContainer,
+        "No fue posible actualizar los equipos. Se está utilizando la última copia almacenada."
+      );
+
+      return;
+    }
+
     state.teams = [];
 
     showTeamsErrorState(teamSelect);
 
     showErrorAlert(
       alertsContainer,
-      "No fue posible cargar los equipos. El selector permanecerá deshabilitado."
+      "No fue posible cargar los equipos y no existe una copia almacenada."
     );
   }
 }
@@ -268,6 +303,11 @@ async function loadGames() {
 
     state.games = games;
 
+    saveCache(
+      CACHE_KEYS.GAMES,
+      state.games
+    );
+
     console.log(
       `${state.games.length} partidos cargados.`
     );
@@ -277,11 +317,29 @@ async function loadGames() {
       error
     );
 
+    const cachedGames = getCache(
+      CACHE_KEYS.GAMES
+    );
+
+    if (
+      Array.isArray(cachedGames)
+      && cachedGames.length > 0
+    ) {
+      state.games = cachedGames;
+
+      showOfflineAlert(
+        alertsContainer,
+        "No fue posible actualizar los partidos. Se está utilizando la última copia almacenada."
+      );
+
+      return;
+    }
+
     state.games = [];
 
     showErrorAlert(
       alertsContainer,
-      "No fue posible cargar los partidos. Algunas pantallas no podrán mostrar resultados."
+      "No fue posible cargar los partidos y no existe una copia almacenada."
     );
   }
 }
@@ -299,6 +357,11 @@ async function loadStadiums() {
 
     state.stadiums = stadiums;
 
+    saveCache(
+      CACHE_KEYS.STADIUMS,
+      state.stadiums
+    );
+
     console.log(
       `${state.stadiums.length} estadios cargados.`
     );
@@ -308,11 +371,29 @@ async function loadStadiums() {
       error
     );
 
+    const cachedStadiums = getCache(
+      CACHE_KEYS.STADIUMS
+    );
+
+    if (
+      Array.isArray(cachedStadiums)
+      && cachedStadiums.length > 0
+    ) {
+      state.stadiums = cachedStadiums;
+
+      showOfflineAlert(
+        alertsContainer,
+        "No fue posible actualizar los estadios. Se está utilizando la última copia almacenada."
+      );
+
+      return;
+    }
+
     state.stadiums = [];
 
     showWarningAlert(
       alertsContainer,
-      "Los estadios no están disponibles. Los partidos se mostrarán con información incompleta."
+      "Los estadios no están disponibles y no existe una copia almacenada. Los partidos se mostrarán con información incompleta."
     );
   }
 }
