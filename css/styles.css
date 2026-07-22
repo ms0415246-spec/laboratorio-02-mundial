@@ -1057,20 +1057,20 @@ select:focus-visible {
   }
 
   .match-card__header {
-    flex-direction: column;
-  }
+      flex-direction: column;
+    }
 
-  .match-card__role {
-    align-self: flex-start;
-  }
+    .match-card__role {
+      align-self: flex-start;
+    }
 
-  .match-card__teams {
-    font-size: 1.35rem;
-  }
+    .match-card__teams {
+      font-size: 1.35rem;
+    }
 
-  .match-card__content {
-    padding: 1.15rem;
-  }
+    .match-card__content {
+      padding: 1.15rem;
+    }
 }
 
 /* ======================================================
