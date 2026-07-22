@@ -42,6 +42,12 @@ index.html
 - Diseño responsive.
 - Código modular.
 
+## Estado del proyecto
+
+✅ Proyecto finalizado.
+
+Se implementaron las cinco pantallas solicitadas en el laboratorio, utilizando JavaScript modular, consumo de API REST, caché con LocalStorage, manejo de errores, reintentos automáticos y diseño responsive.
+
 ## Autor
 
 Mariana Sánchez
