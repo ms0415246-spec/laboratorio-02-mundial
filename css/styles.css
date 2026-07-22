@@ -1488,6 +1488,167 @@ select:focus-visible {
 }
 
 /* ======================================================
+   TARJETAS DE GRUPOS CON EMPATES
+====================================================== */
+
+.draw-group-card {
+  overflow: hidden;
+
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-medium);
+
+  box-shadow: var(--shadow-small);
+
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+
+  animation: matchCardAppear 0.35s ease both;
+}
+
+.draw-group-card:hover {
+  transform: translateY(-4px);
+  border-color: #7f8cff;
+  box-shadow: var(--shadow-medium);
+}
+
+.draw-group-card__header {
+  padding: 1.2rem 1.3rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.draw-group-card__eyebrow {
+  margin-bottom: 0.25rem;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.draw-group-card__header h3 {
+  color: var(--color-text);
+
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.draw-group-card__total {
+  flex-shrink: 0;
+  padding: 0.4rem 0.7rem;
+
+  background: rgba(127, 140, 255, 0.12);
+  color: #a9b2ff;
+
+  border: 1px solid rgba(127, 140, 255, 0.4);
+  border-radius: 999px;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.draw-group-card__matches {
+  display: grid;
+}
+
+.draw-match {
+  padding: 1rem 1.2rem;
+}
+
+.draw-match + .draw-match {
+  border-top: 1px solid var(--color-border);
+}
+
+.draw-match__teams {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.draw-match__teams > span {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.draw-match__teams > span:first-child {
+  text-align: right;
+}
+
+.draw-match__teams > span:last-child {
+  text-align: left;
+}
+
+.draw-match__score {
+  min-width: 82px;
+  padding: 0.5rem 0.65rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+}
+
+.draw-match__score strong {
+  color: var(--color-text);
+
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.draw-match__score span {
+  color: #a9b2ff;
+  font-weight: 700;
+}
+
+.draw-match__details {
+  margin-top: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+
+.draw-match__details span {
+  color: #a9b2ff;
+  font-weight: 700;
+}
+
+.draw-match__details time {
+  text-align: right;
+}
+
+/* ======================================================
    FOOTER
 ====================================================== */
 
@@ -1782,6 +1943,34 @@ select:focus-visible {
   .stadium-analytics-card__bar {
     right: 1rem;
     left: 1rem;
+  }
+
+    .draw-group-card__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .draw-match__teams {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .draw-match__teams > span:first-child,
+  .draw-match__teams > span:last-child {
+    text-align: center;
+  }
+
+  .draw-match__score {
+    justify-self: center;
+  }
+
+  .draw-match__details {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .draw-match__details time {
+    text-align: left;
   }
 }
 
