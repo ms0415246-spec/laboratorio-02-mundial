@@ -3,11 +3,26 @@
 import { getTeams } from "./services/teamsService.js";
 
 import {
+  getGames,
+  getGamesByTeam
+} from "./services/gamesService.js";
+
+import {
+  getStadiums
+} from "./services/stadiumsService.js";
+
+import {
   populateTeamsSelector,
   showTeamsLoadingState,
   showTeamsErrorState,
   getSelectedTeamId
 } from "./ui/selectors.js";
+
+import {
+  renderMatchCards,
+  showCardsLoadingState,
+  showEmptyCardsState
+} from "./ui/cards.js";
 
 /* ======================================================
    ESTADO DE LA APLICACIÓN
@@ -15,6 +30,8 @@ import {
 
 const state = {
   teams: [],
+  games: [],
+  stadiums: [],
   selectedTeamId: null
 };
 
@@ -38,6 +55,9 @@ const menuButton = document.getElementById("menuButton");
 const mainNavigation = document.getElementById("mainNavigation");
 const teamSelect = document.getElementById("teamSelect");
 const apiStatus = document.getElementById("apiStatus");
+const championRouteResults = document.getElementById(
+  "championRouteResults"
+);
 
 /* ======================================================
    MOSTRAR UNA PANTALLA
@@ -231,6 +251,131 @@ async function loadTeams() {
 }
 
 /* ======================================================
+   CARGAR PARTIDOS
+====================================================== */
+
+/**
+ * Consulta y guarda los partidos disponibles.
+ */
+async function loadGames() {
+  try {
+    const games = await getGames();
+
+    state.games = games;
+
+    console.log(
+      `${state.games.length} partidos cargados.`
+    );
+  } catch (error) {
+    console.error(
+      "Error al cargar los partidos:",
+      error
+    );
+
+    state.games = [];
+  }
+}
+
+/* ======================================================
+   CARGAR ESTADIOS
+====================================================== */
+
+/**
+ * Consulta y guarda los estadios disponibles.
+ */
+async function loadStadiums() {
+  try {
+    const stadiums = await getStadiums();
+
+    state.stadiums = stadiums;
+
+    console.log(
+      `${state.stadiums.length} estadios cargados.`
+    );
+  } catch (error) {
+    console.error(
+      "Error al cargar los estadios:",
+      error
+    );
+
+    state.stadiums = [];
+  }
+}
+
+/* ======================================================
+   CARGAR DATOS INICIALES
+====================================================== */
+
+/**
+ * Carga equipos, partidos y estadios.
+ *
+ * Cada recurso se administra por separado para que el fallo
+ * de uno no elimine los datos obtenidos de los demás.
+ */
+async function loadInitialData() {
+  updateApiStatus(
+    "Cargando información del Mundial 2026..."
+  );
+
+  await Promise.all([
+    loadTeams(),
+    loadGames(),
+    loadStadiums()
+  ]);
+
+  updateApiStatus(
+    createLoadedDataMessage()
+  );
+}
+
+/**
+ * Construye el resumen de los datos cargados.
+ *
+ * @returns {string} Mensaje de estado.
+ */
+function createLoadedDataMessage() {
+  return (
+    `${state.teams.length} equipos, `
+    + `${state.games.length} partidos y `
+    + `${state.stadiums.length} estadios cargados.`
+  );
+}
+
+/* ======================================================
+   MOSTRAR ITINERARIO DEL EQUIPO
+====================================================== */
+
+/**
+ * Filtra y muestra los partidos del equipo seleccionado.
+ *
+ * @param {string|number} teamId Identificador del equipo.
+ */
+function renderChampionRoute(teamId) {
+  if (state.games.length === 0) {
+    showEmptyCardsState(
+      championRouteResults,
+      "Partidos no disponibles",
+      "No fue posible obtener los partidos desde la API."
+    );
+
+    return;
+  }
+
+  const teamGames = getGamesByTeam(
+    state.games,
+    teamId
+  );
+
+  renderMatchCards(
+    championRouteResults,
+    teamGames,
+    state.teams,
+    state.stadiums,
+    teamId
+  );
+}
+
+/* ======================================================
    EVENTO DEL SELECTOR DE EQUIPOS
 ====================================================== */
 
@@ -245,7 +390,12 @@ function configureTeamSelector() {
     state.selectedTeamId = selectedTeamId;
 
     if (!selectedTeamId) {
-      console.log("No hay un equipo seleccionado.");
+      showEmptyCardsState(
+        championRouteResults,
+        "Itinerario pendiente",
+        "Selecciona un equipo para mostrar sus partidos."
+      );
+
       return;
     }
 
@@ -253,6 +403,15 @@ function configureTeamSelector() {
       "Equipo seleccionado:",
       selectedTeamId
     );
+
+    showCardsLoadingState(
+      championRouteResults,
+      3
+    );
+
+    window.setTimeout(() => {
+      renderChampionRoute(selectedTeamId);
+    }, 300);
   });
 }
 
@@ -285,7 +444,7 @@ async function init() {
 
   showScreen("inicio");
 
-  await loadTeams();
+  await loadInitialData();
 }
 
 /* Punto de entrada de la aplicación */
