@@ -13,7 +13,8 @@ import {
 } from "./services/stadiumsService.js";
 
 import {
-  getGroups
+  getGroups,
+  createDefensiveRanking
 } from "./services/groupsService.js";
 
 import {
@@ -26,6 +27,7 @@ import {
 import {
   renderMatchCards,
   renderBlowoutCards,
+  renderWallRanking,
   showCardsLoadingState,
   showEmptyCardsState
 } from "./ui/cards.js";
@@ -99,6 +101,11 @@ const blowoutsResults = document.getElementById(
 const blowoutsTotal = document.getElementById(
   "blowoutsTotal"
 );
+
+const wallRankingContainer =
+  document.getElementById(
+    "wallRankingResults"
+  );
 
 /* ======================================================
    MOSTRAR UNA PANTALLA
@@ -510,6 +517,26 @@ async function loadGroups() {
 }
 
 /* ======================================================
+   RENDERIZAR EL MURO
+====================================================== */
+
+function renderWall() {
+
+  const ranking =
+    createDefensiveRanking(
+      state.groups
+    );
+
+  renderWallRanking(
+    wallRankingContainer,
+    ranking,
+    state.teams,
+    state.games
+  );
+
+}
+
+/* ======================================================
    CARGAR DATOS INICIALES
 ====================================================== */
 
@@ -538,6 +565,7 @@ async function loadInitialData() {
   );
 
   renderBlowoutsTracker();
+  renderWall();
 
   if (
     state.teams.length > 0
