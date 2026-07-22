@@ -1005,6 +1005,199 @@ select:focus-visible {
 }
 
 /* ======================================================
+   TARJETAS DE GOLEADAS
+====================================================== */
+
+.blowout-card {
+  position: relative;
+  overflow: hidden;
+
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-medium);
+
+  box-shadow: var(--shadow-small);
+
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+
+  animation: matchCardAppear 0.35s ease both;
+}
+
+.blowout-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--color-danger);
+  box-shadow: var(--shadow-medium);
+}
+
+.blowout-card__stripe {
+  width: 100%;
+  height: 7px;
+
+  background: repeating-linear-gradient(
+    -55deg,
+    var(--color-danger) 0,
+    var(--color-danger) 7px,
+    transparent 7px,
+    transparent 15px
+  );
+}
+
+.blowout-card__content {
+  padding: 1.4rem;
+}
+
+.blowout-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.blowout-card__round {
+  margin-bottom: 0.35rem;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.blowout-card__title {
+  color: var(--color-text);
+
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 400;
+  letter-spacing: 0.035em;
+  line-height: 1.15;
+}
+
+.blowout-card__title span {
+  margin: 0 0.3rem;
+
+  color: var(--color-danger);
+
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.blowout-card__difference {
+  min-width: 52px;
+  min-height: 52px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(231, 76, 60, 0.12);
+  color: var(--color-danger);
+
+  border: 1px solid rgba(231, 76, 60, 0.45);
+  border-radius: 50%;
+
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.blowout-card__score {
+  margin: 1.2rem 0;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+
+  padding: 1rem;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+}
+
+.blowout-card__team {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.blowout-card__team:first-child {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.blowout-card__team:last-child {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.blowout-card__team span {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.blowout-card__team strong {
+  color: var(--color-text);
+
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.blowout-card__separator {
+  color: var(--color-text-muted);
+
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+}
+
+.blowout-card__details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  border-top: 1px solid var(--color-border);
+}
+
+.blowout-card__details > div {
+  padding: 0.9rem 0.75rem;
+  text-align: center;
+}
+
+.blowout-card__details > div + div {
+  border-left: 1px solid var(--color-border);
+}
+
+.blowout-card__details small {
+  display: block;
+  margin-bottom: 0.2rem;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.blowout-card__details p {
+  color: var(--color-text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ======================================================
    RANKING
 ====================================================== */
 
@@ -1181,6 +1374,45 @@ select:focus-visible {
     .match-card__content {
       padding: 1.15rem;
     }
+
+      .blowout-card__header {
+    flex-direction: column;
+  }
+
+  .blowout-card__difference {
+    min-width: 46px;
+    min-height: 46px;
+  }
+
+  .blowout-card__score {
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.45rem;
+    padding: 0.8rem;
+  }
+
+  .blowout-card__team {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .blowout-card__team:first-child,
+  .blowout-card__team:last-child {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .blowout-card__details {
+    grid-template-columns: 1fr;
+  }
+
+  .blowout-card__details > div + div {
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .blowout-card__content {
+    padding: 1.15rem;
+  }
 }
 
 /* ======================================================
