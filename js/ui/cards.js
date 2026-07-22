@@ -620,3 +620,161 @@ function getOpponentId(game, teamId) {
 
   return game.home_team_id ?? null;
 }
+
+/* ======================================================
+   RENDERIZAR ANALÍTICA DE ESTADIOS
+====================================================== */
+
+/**
+ * Muestra una fila analítica por cada estadio.
+ *
+ * @param {HTMLElement} container Contenedor de resultados.
+ * @param {Array} analytics Estadios con datos calculados.
+ */
+export function renderStadiumAnalytics(
+  container,
+  analytics
+) {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (
+    !Array.isArray(analytics)
+    || analytics.length === 0
+  ) {
+    showEmptyCardsState(
+      container,
+      "Estadios no disponibles",
+      "No fue posible generar la analítica de los estadios."
+    );
+
+    return;
+  }
+
+  const maximumAttendance = Math.max(
+    ...analytics.map((stadium) => {
+      return Number(
+        stadium.potentialAttendance ?? 0
+      );
+    }),
+    1
+  );
+
+  analytics.forEach((stadium, index) => {
+    const row = createStadiumAnalyticsRow(
+      stadium,
+      index,
+      maximumAttendance
+    );
+
+    container.appendChild(row);
+  });
+}
+
+/* ======================================================
+   CREAR FILA ANALÍTICA DE ESTADIO
+====================================================== */
+
+/**
+ * Construye una fila con la información de un estadio.
+ *
+ * @param {object} stadium Datos analíticos del estadio.
+ * @param {number} index Posición del estadio.
+ * @param {number} maximumAttendance Valor máximo.
+ * @returns {HTMLElement} Fila construida.
+ */
+function createStadiumAnalyticsRow(
+  stadium,
+  index,
+  maximumAttendance
+) {
+  const capacity = Number(
+    stadium.capacity ?? 0
+  );
+
+  const gamesCount = Number(
+    stadium.gamesCount ?? 0
+  );
+
+  const potentialAttendance = Number(
+    stadium.potentialAttendance ?? 0
+  );
+
+  const percentage =
+    maximumAttendance > 0
+      ? (
+          potentialAttendance
+          / maximumAttendance
+        ) * 100
+      : 0;
+
+  const row = document.createElement("article");
+
+  row.className = "stadium-analytics-card";
+
+  row.innerHTML = `
+    <div class="stadium-analytics-card__position">
+      ${index + 1}
+    </div>
+
+    <div class="stadium-analytics-card__info">
+      <h3>
+        ${stadium.name_en ?? stadium.name ?? "Estadio"}
+      </h3>
+
+      <p>
+        ${stadium.city_en ?? stadium.city ?? "Ciudad no disponible"},
+        ${stadium.country_en ?? stadium.country ?? "País no disponible"}
+      </p>
+    </div>
+
+    <div class="stadium-analytics-card__stat">
+      <small>Capacidad</small>
+      <strong>
+        ${formatNumber(capacity)}
+      </strong>
+    </div>
+
+    <div class="stadium-analytics-card__stat">
+      <small>Partidos</small>
+      <strong>
+        ${gamesCount}
+      </strong>
+    </div>
+
+    <div class="stadium-analytics-card__stat">
+      <small>Asistencia potencial</small>
+      <strong>
+        ${formatNumber(potentialAttendance)}
+      </strong>
+    </div>
+
+    <div class="stadium-analytics-card__bar">
+      <span
+        style="width: ${percentage}%"
+        aria-label="${percentage.toFixed(1)} por ciento"
+      ></span>
+    </div>
+  `;
+
+  return row;
+}
+
+/* ======================================================
+   FORMATEAR NÚMEROS
+====================================================== */
+
+/**
+ * Agrega separadores de miles a un número.
+ *
+ * @param {number} value Número.
+ * @returns {string} Número formateado.
+ */
+function formatNumber(value) {
+  return new Intl.NumberFormat(
+    "es-CR"
+  ).format(value);
+}
