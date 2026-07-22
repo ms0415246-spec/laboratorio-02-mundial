@@ -422,3 +422,201 @@ function createBlowoutCard(game, teams) {
 
   return card;
 }
+
+/* ======================================================
+   RENDERIZAR RANKING DEFENSIVO
+====================================================== */
+
+/**
+ * Muestra el ranking de los equipos con menos goles recibidos.
+ *
+ * @param {HTMLElement} container Contenedor del ranking.
+ * @param {Array} ranking Registros defensivos.
+ * @param {Array} teams Lista de equipos.
+ * @param {Array} games Lista de partidos.
+ */
+export function renderWallRanking(
+  container,
+  ranking,
+  teams,
+  games
+) {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!Array.isArray(ranking) || ranking.length === 0) {
+    showEmptyCardsState(
+      container,
+      "Ranking no disponible",
+      "No fue posible generar el ranking defensivo."
+    );
+
+    return;
+  }
+
+  ranking.forEach((teamRecord, index) => {
+    const card = createWallRankingCard(
+      teamRecord,
+      index,
+      teams,
+      games
+    );
+
+    container.appendChild(card);
+  });
+}
+
+/* ======================================================
+   CREAR TARJETA DEL MURO
+====================================================== */
+
+/**
+ * Construye una fila del ranking defensivo.
+ *
+ * @param {object} teamRecord Registro del grupo.
+ * @param {number} index Posición del ranking.
+ * @param {Array} teams Lista de equipos.
+ * @param {Array} games Lista de partidos.
+ * @returns {HTMLElement} Tarjeta construida.
+ */
+function createWallRankingCard(
+  teamRecord,
+  index,
+  teams,
+  games
+) {
+  const teamId =
+    teamRecord.team_id
+    ?? teamRecord.id
+    ?? teamRecord.team?.id
+    ?? null;
+
+  const team = findTeamById(
+    teams,
+    teamId
+  );
+
+  const goalsAgainst = Number(
+    teamRecord.goals_against
+    ?? teamRecord.goal_against
+    ?? teamRecord.ga
+    ?? teamRecord.goalsAgainst
+    ?? 0
+  );
+
+  const nextGame = findNextPendingGame(
+    games,
+    teamId
+  );
+
+  const opponentId = getOpponentId(
+    nextGame,
+    teamId
+  );
+
+  const opponent = findTeamById(
+    teams,
+    opponentId
+  );
+
+  const card = document.createElement("article");
+
+  card.className = "wall-card";
+
+  card.innerHTML = `
+    <div class="wall-card__position">
+      ${index + 1}
+    </div>
+
+    <div class="wall-card__team">
+      <h3>${getTeamName(team)}</h3>
+
+      <p>
+        Grupo ${teamRecord.groupName ?? "—"}
+      </p>
+    </div>
+
+    <div class="wall-card__stat">
+      <small>Goles recibidos</small>
+      <strong>${goalsAgainst}</strong>
+    </div>
+
+    <div class="wall-card__opponent">
+      <small>Próximo rival</small>
+      <p>
+        ${
+          nextGame
+            ? getTeamName(opponent)
+            : "Sin partido pendiente"
+        }
+      </p>
+    </div>
+  `;
+
+  return card;
+}
+
+/* ======================================================
+   BUSCAR PRÓXIMO PARTIDO PENDIENTE
+====================================================== */
+
+function findNextPendingGame(games, teamId) {
+  const pendingGames = games.filter((game) => {
+    const isHome =
+      String(game.home_team_id)
+      === String(teamId);
+
+    const isAway =
+      String(game.away_team_id)
+      === String(teamId);
+
+    const finishedValue = String(
+      game.finished ?? ""
+    ).toLowerCase();
+
+    const isFinished =
+      finishedValue === "true"
+      || game.time_elapsed === "finished"
+      || game.time_elapsed === "completed";
+
+    return (
+      !isFinished
+      && (isHome || isAway)
+    );
+  });
+
+  return pendingGames
+    .sort((gameA, gameB) => {
+      const dateA = new Date(
+        gameA.local_date ?? ""
+      ).getTime();
+
+      const dateB = new Date(
+        gameB.local_date ?? ""
+      ).getTime();
+
+      return dateA - dateB;
+    })[0] ?? null;
+}
+
+/* ======================================================
+   OBTENER RIVAL
+====================================================== */
+
+function getOpponentId(game, teamId) {
+  if (!game) {
+    return null;
+  }
+
+  if (
+    String(game.home_team_id)
+    === String(teamId)
+  ) {
+    return game.away_team_id ?? null;
+  }
+
+  return game.home_team_id ?? null;
+}
