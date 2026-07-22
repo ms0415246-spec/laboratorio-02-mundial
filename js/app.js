@@ -4,7 +4,8 @@ import { getTeams } from "./services/teamsService.js";
 
 import {
   getGames,
-  getGamesByTeam
+  getGamesByTeam,
+  getBlowoutGames
 } from "./services/gamesService.js";
 
 import {
@@ -20,6 +21,7 @@ import {
 
 import {
   renderMatchCards,
+  renderBlowoutCards,
   showCardsLoadingState,
   showEmptyCardsState
 } from "./ui/cards.js";
@@ -83,6 +85,14 @@ const championRouteResults = document.getElementById(
 );
 const alertsContainer = document.getElementById(
   "alertsContainer"
+);
+
+const blowoutsResults = document.getElementById(
+  "blowoutsResults"
+);
+
+const blowoutsTotal = document.getElementById(
+  "blowoutsTotal"
 );
 
 /* ======================================================
@@ -467,6 +477,8 @@ async function loadInitialData() {
     createLoadedDataMessage()
   );
 
+  renderBlowoutsTracker();
+
   if (
     state.teams.length > 0
     && state.games.length > 0
@@ -523,6 +535,42 @@ function renderChampionRoute(teamId) {
     state.teams,
     state.stadiums,
     teamId
+  );
+}
+
+/* ======================================================
+   MOSTRAR RASTREADOR DE GOLEADAS
+====================================================== */
+
+/**
+ * Filtra y muestra los partidos finalizados con una
+ * diferencia igual o superior a tres goles.
+ */
+function renderBlowoutsTracker() {
+  if (state.games.length === 0) {
+    blowoutsTotal.textContent = "0";
+
+    showEmptyCardsState(
+      blowoutsResults,
+      "Partidos no disponibles",
+      "No fue posible obtener los partidos desde la API."
+    );
+
+    return;
+  }
+
+  const blowoutGames = getBlowoutGames(
+    state.games
+  );
+
+  blowoutsTotal.textContent = String(
+    blowoutGames.length
+  );
+
+  renderBlowoutCards(
+    blowoutsResults,
+    blowoutGames,
+    state.teams
   );
 }
 
