@@ -13,6 +13,10 @@ import {
 } from "./services/stadiumsService.js";
 
 import {
+  getGroups
+} from "./services/groupsService.js";
+
+import {
   populateTeamsSelector,
   showTeamsLoadingState,
   showTeamsErrorState,
@@ -57,6 +61,7 @@ const state = {
   teams: [],
   games: [],
   stadiums: [],
+  groups: [],
   selectedTeamId: null
 };
 
@@ -451,6 +456,60 @@ async function loadStadiums() {
 }
 
 /* ======================================================
+   CARGAR GRUPOS
+====================================================== */
+
+/**
+ * Consulta y guarda los grupos disponibles.
+ */
+async function loadGroups() {
+  try {
+    const groups = await getGroups();
+
+    state.groups = groups;
+
+    saveCache(
+      CACHE_KEYS.GROUPS,
+      state.groups
+    );
+
+    console.log(
+      `${state.groups.length} grupos cargados.`
+    );
+  } catch (error) {
+    console.error(
+      "Error al cargar los grupos:",
+      error
+    );
+
+    const cachedGroups = getCache(
+      CACHE_KEYS.GROUPS
+    );
+
+    if (
+      Array.isArray(cachedGroups)
+      && cachedGroups.length > 0
+    ) {
+      state.groups = cachedGroups;
+
+      showOfflineAlert(
+        alertsContainer,
+        "No fue posible actualizar los grupos. Se está utilizando la última copia almacenada."
+      );
+
+      return;
+    }
+
+    state.groups = [];
+
+    showWarningAlert(
+      alertsContainer,
+      "Los grupos no están disponibles y no existe una copia almacenada. La pantalla El Muro no podrá mostrar el ranking."
+    );
+  }
+}
+
+/* ======================================================
    CARGAR DATOS INICIALES
 ====================================================== */
 
@@ -470,7 +529,8 @@ async function loadInitialData() {
   await Promise.all([
     loadTeams(),
     loadGames(),
-    loadStadiums()
+    loadStadiums(),
+    loadGroups()
   ]);
 
   updateApiStatus(
@@ -483,6 +543,7 @@ async function loadInitialData() {
     state.teams.length > 0
     && state.games.length > 0
     && state.stadiums.length > 0
+    && state.groups.length > 0
   ) {
     showSuccessAlert(
       alertsContainer,
@@ -499,8 +560,9 @@ async function loadInitialData() {
 function createLoadedDataMessage() {
   return (
     `${state.teams.length} equipos, `
-    + `${state.games.length} partidos y `
-    + `${state.stadiums.length} estadios cargados.`
+    + `${state.games.length} partidos, `
+    + `${state.stadiums.length} estadios y `
+    + `${state.groups.length} grupos cargados.`
   );
 }
 
