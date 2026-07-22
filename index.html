@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Aplicación web de análisis de datos del Mundial 2026 para el laboratorio 02 de ISW-521."
+  >
+
+  <title>World Cup 2026 Analytics</title>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <!-- Encabezado principal -->
+  <header class="header">
+    <div class="header__content">
+      <a class="logo" href="#inicio" aria-label="Ir al inicio">
+        <span class="logo__icon" aria-hidden="true">⚽</span>
+
+        <div>
+          <h1 class="logo__title">World Cup 2026</h1>
+          <p class="logo__subtitle">Cruce de datos y analítica</p>
+        </div>
+      </a>
+
+      <button
+        class="menu-button"
+        id="menuButton"
+        type="button"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+        aria-controls="mainNavigation"
+      >
+        ☰
+      </button>
+
+      <nav
+        class="navigation"
+        id="mainNavigation"
+        aria-label="Navegación principal"
+      >
+        <button
+          class="navigation__button active"
+          type="button"
+          data-screen="inicio"
+        >
+          Inicio
+        </button>
+
+        <button
+          class="navigation__button"
+          type="button"
+          data-screen="ruta-campeon"
+        >
+          Ruta del Campeón
+        </button>
+
+        <button
+          class="navigation__button"
+          type="button"
+          data-screen="goleadas"
+        >
+          Goleadas
+        </button>
+
+        <button
+          class="navigation__button"
+          type="button"
+          data-screen="muro"
+        >
+          El Muro
+        </button>
+
+        <button
+          class="navigation__button"
+          type="button"
+          data-screen="estadios"
+        >
+          Estadios
+        </button>
+
+        <button
+          class="navigation__button"
+          type="button"
+          data-screen="empates"
+        >
+          Empates
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Estado general de la API -->
+    <section
+      class="status-panel"
+      aria-live="polite"
+      aria-label="Estado de la aplicación"
+    >
+      <span class="status-panel__indicator"></span>
+
+      <p id="apiStatus">
+        Aplicación preparada para consultar la API del Mundial 2026.
+      </p>
+    </section>
+
+    <!-- Pantalla de inicio -->
+    <section
+      class="screen active"
+      id="inicio"
+      data-screen-section="inicio"
+    >
+      <div class="hero">
+        <div class="hero__content">
+          <p class="eyebrow">Laboratorio 02 · ISW-521</p>
+
+          <h2 class="hero__title">
+            Analítica del Mundial 2026
+          </h2>
+
+          <p class="hero__description">
+            Aplicación interactiva para consultar, cruzar y analizar
+            información de equipos, partidos, grupos y estadios.
+          </p>
+        </div>
+
+        <div class="hero__ball" aria-hidden="true">
+          ⚽
+        </div>
+      </div>
+
+      <section class="projects-section">
+        <div class="section-heading">
+          <p class="eyebrow">Pantallas del laboratorio</p>
+          <h2>Explora las cinco funcionalidades</h2>
+        </div>
+
+        <div class="projects-grid">
+
+          <article class="project-card">
+            <span class="project-card__number">01</span>
+            <h3>La Ruta del Campeón</h3>
+            <p>
+              Consulta el itinerario de partidos de un equipo y conoce
+              los estadios y ciudades que visitará.
+            </p>
+
+            <button
+              class="project-card__button"
+              type="button"
+              data-open-screen="ruta-campeon"
+            >
+              Abrir pantalla
+            </button>
+          </article>
+
+          <article class="project-card">
+            <span class="project-card__number">02</span>
+            <h3>Rastreador de Goleadas</h3>
+            <p>
+              Identifica los partidos finalizados con una diferencia
+              de tres o más goles.
+            </p>
+
+            <button
+              class="project-card__button"
+              type="button"
+              data-open-screen="goleadas"
+            >
+              Abrir pantalla
+            </button>
+          </article>
+
+          <article class="project-card">
+            <span class="project-card__number">03</span>
+            <h3>El Muro</h3>
+            <p>
+              Muestra un ranking con los equipos que han recibido
+              menos goles y su próximo rival.
+            </p>
+
+            <button
+              class="project-card__button"
+              type="button"
+              data-open-screen="muro"
+            >
+              Abrir pantalla
+            </button>
+          </article>
+
+          <article class="project-card">
+            <span class="project-card__number">04</span>
+            <h3>Analítica de Estadios</h3>
+            <p>
+              Compara capacidades, partidos albergados y asistencia
+              potencial de los estadios.
+            </p>
+
+            <button
+              class="project-card__button"
+              type="button"
+              data-open-screen="estadios"
+            >
+              Abrir pantalla
+            </button>
+          </article>
+
+          <article class="project-card">
+            <span class="project-card__number">05</span>
+            <h3>Radar de Empates</h3>
+            <p>
+              Organiza los partidos empatados por grupo y muestra
+              los equipos participantes.
+            </p>
+
+            <button
+              class="project-card__button"
+              type="button"
+              data-open-screen="empates"
+            >
+              Abrir pantalla
+            </button>
+          </article>
+
+        </div>
+      </section>
+    </section>
+
+    <!-- Pantalla: Ruta del Campeón -->
+    <section
+      class="screen"
+      id="ruta-campeon"
+      data-screen-section="ruta-campeon"
+    >
+      <div class="screen-header">
+        <p class="eyebrow">Pantalla 01</p>
+        <h2>La Ruta del Campeón</h2>
+        <p>
+          Selecciona un equipo para consultar sus partidos,
+          estadios y ciudades.
+        </p>
+      </div>
+
+      <div class="control-panel">
+        <div class="form-group">
+          <label for="teamSelect">
+            Selecciona un equipo
+          </label>
+
+          <select id="teamSelect" disabled>
+            <option value="">
+              Los equipos se cargarán desde la API
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <section
+        class="results-section"
+        aria-live="polite"
+      >
+        <div class="empty-state">
+          <span aria-hidden="true">🗺️</span>
+          <h3>Itinerario pendiente</h3>
+          <p>
+            Cuando selecciones un equipo, sus partidos aparecerán aquí.
+          </p>
+        </div>
+
+        <div
+          class="cards-grid"
+          id="championRouteResults"
+        ></div>
+      </section>
+    </section>
+
+    <!-- Pantalla: Rastreador de Goleadas -->
+    <section
+      class="screen"
+      id="goleadas"
+      data-screen-section="goleadas"
+    >
+      <div class="screen-header">
+        <p class="eyebrow">Pantalla 02</p>
+        <h2>Rastreador de Goleadas</h2>
+        <p>
+          Partidos finalizados con una diferencia igual o superior
+          a tres goles.
+        </p>
+      </div>
+
+      <section
+        class="results-section"
+        aria-live="polite"
+      >
+        <div class="summary-card">
+          <span class="summary-card__label">
+            Total de goleadas
+          </span>
+
+          <strong
+            class="summary-card__value"
+            id="blowoutsTotal"
+          >
+            0
+          </strong>
+        </div>
+
+        <div
+          class="cards-grid"
+          id="blowoutsResults"
+        >
+          <div class="empty-state">
+            <span aria-hidden="true">🥅</span>
+            <h3>Datos pendientes</h3>
+            <p>
+              Las goleadas aparecerán cuando se conecte la API.
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Pantalla: El Muro -->
+    <section
+      class="screen"
+      id="muro"
+      data-screen-section="muro"
+    >
+      <div class="screen-header">
+        <p class="eyebrow">Pantalla 03</p>
+        <h2>El Muro</h2>
+        <p>
+          Ranking de los cinco equipos con menos goles recibidos.
+        </p>
+      </div>
+
+      <section
+        class="results-section"
+        aria-live="polite"
+      >
+        <div
+          class="ranking-list"
+          id="wallRankingResults"
+        >
+          <div class="empty-state">
+            <span aria-hidden="true">🛡️</span>
+            <h3>Ranking pendiente</h3>
+            <p>
+              Los equipos aparecerán cuando se carguen los grupos
+              y partidos.
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Pantalla: Analítica de Estadios -->
+    <section
+      class="screen"
+      id="estadios"
+      data-screen-section="estadios"
+    >
+      <div class="screen-header">
+        <p class="eyebrow">Pantalla 04</p>
+        <h2>Analítica de Estadios</h2>
+        <p>
+          Comparación de capacidad, partidos y asistencia potencial.
+        </p>
+      </div>
+
+      <section
+        class="results-section"
+        aria-live="polite"
+      >
+        <div
+          class="chart-container"
+          id="stadiumsChart"
+        >
+          <div class="empty-state">
+            <span aria-hidden="true">🏟️</span>
+            <h3>Gráfica pendiente</h3>
+            <p>
+              La información de los estadios se mostrará aquí.
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Pantalla: Radar de Empates -->
+    <section
+      class="screen"
+      id="empates"
+      data-screen-section="empates"
+    >
+      <div class="screen-header">
+        <p class="eyebrow">Pantalla 05</p>
+        <h2>Radar de Empates</h2>
+        <p>
+          Matriz de partidos empatados organizada por grupo.
+        </p>
+      </div>
+
+      <section
+        class="results-section"
+        aria-live="polite"
+      >
+        <div
+          class="groups-grid"
+          id="drawsResults"
+        >
+          <div class="empty-state">
+            <span aria-hidden="true">🤝</span>
+            <h3>Empates pendientes</h3>
+            <p>
+              Los partidos empatados se agruparán en esta sección.
+            </p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>
+      Laboratorio 02 · ISW-521 · Programación en Ambiente Web I
+    </p>
+
+    <p>
+      Datos proporcionados por
+      <code>worldcup26.ir</code>
+    </p>
+  </footer>
+
+  <script
+    type="module"
+    src="js/app.js"
+  ></script>
+</body>
+</html>
