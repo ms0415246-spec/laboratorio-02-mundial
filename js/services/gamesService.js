@@ -2,6 +2,10 @@
 
 import { fetchFromApi } from "../api/apiClient.js";
 
+import {
+  getTimestamp
+} from "../utils/date.js";
+
 /* ======================================================
    CONFIGURACIÓN DEL SERVICIO
 ====================================================== */
@@ -41,10 +45,10 @@ export async function getGames() {
  */
 export function sortGamesByDate(games) {
   return [...games].sort((gameA, gameB) => {
-    const dateA = getGameTimestamp(gameA);
-    const dateB = getGameTimestamp(gameB);
-
-    return dateA - dateB;
+    return (
+      getTimestamp(gameA.local_date)
+      - getTimestamp(gameB.local_date)
+    );
   });
 }
 
@@ -273,24 +277,4 @@ export function countGamesByStadium(
       === String(stadiumId)
     );
   }).length;
-}
-
-/* ======================================================
-   CONVERTIR FECHA A MARCA DE TIEMPO
-====================================================== */
-
-/**
- * Convierte local_date en una marca de tiempo numérica.
- *
- * @param {object} game Datos del partido.
- * @returns {number} Marca de tiempo.
- */
-function getGameTimestamp(game) {
-  const timestamp = new Date(
-    game.local_date ?? ""
-  ).getTime();
-
-  return Number.isNaN(timestamp)
-    ? Number.MAX_SAFE_INTEGER
-    : timestamp;
 }

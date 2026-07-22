@@ -13,6 +13,10 @@ import {
   formatStadiumCapacity
 } from "../services/stadiumsService.js";
 
+import {
+  formatDateTime
+} from "../utils/date.js";
+
 /* ======================================================
    MOSTRAR ESTADO VACÍO
 ====================================================== */
@@ -172,8 +176,8 @@ function createMatchCard(
     ? "Local"
     : "Visitante";
 
-  const formattedDate = formatMatchDate(
-    game.local_date
+  const formattedDate = formatDateTime(
+  game.local_date
   );
 
   const card = document.createElement("article");
@@ -243,33 +247,6 @@ function createMatchCard(
   `;
 
   return card;
-}
-
-/* ======================================================
-   FORMATEAR FECHA DEL PARTIDO
-====================================================== */
-
-/**
- * Convierte la fecha de la API a un formato legible.
- *
- * @param {string} localDate Fecha original.
- * @returns {string} Fecha formateada.
- */
-function formatMatchDate(localDate) {
-  if (!localDate) {
-    return "Fecha no disponible";
-  }
-
-  const date = new Date(localDate);
-
-  if (Number.isNaN(date.getTime())) {
-    return "Fecha no disponible";
-  }
-
-  return new Intl.DateTimeFormat("es-CR", {
-    dateStyle: "long",
-    timeStyle: "short"
-  }).format(date);
 }
 
 /* ======================================================
