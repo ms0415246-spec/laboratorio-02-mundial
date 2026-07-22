@@ -9,7 +9,8 @@ import {
 } from "./services/gamesService.js";
 
 import {
-  getStadiums
+  getStadiums,
+  createStadiumAnalytics
 } from "./services/stadiumsService.js";
 
 import {
@@ -28,6 +29,7 @@ import {
   renderMatchCards,
   renderBlowoutCards,
   renderWallRanking,
+  renderStadiumAnalytics,
   showCardsLoadingState,
   showEmptyCardsState
 } from "./ui/cards.js";
@@ -106,6 +108,10 @@ const wallRankingContainer =
   document.getElementById(
     "wallRankingResults"
   );
+
+  const stadiumsChart = document.getElementById(
+  "stadiumsChart"
+);
 
 /* ======================================================
    MOSTRAR UNA PANTALLA
@@ -537,6 +543,38 @@ function renderWall() {
 }
 
 /* ======================================================
+   RENDERIZAR ANALÍTICA DE ESTADIOS
+====================================================== */
+
+/**
+ * Calcula y muestra la analítica de los estadios.
+ */
+function renderStadiumsAnalytics() {
+  if (
+    state.stadiums.length === 0
+    || state.games.length === 0
+  ) {
+    showEmptyCardsState(
+      stadiumsChart,
+      "Analítica no disponible",
+      "No fue posible obtener los estadios o los partidos."
+    );
+
+    return;
+  }
+
+  const analytics = createStadiumAnalytics(
+    state.stadiums,
+    state.games
+  );
+
+  renderStadiumAnalytics(
+    stadiumsChart,
+    analytics
+  );
+}
+
+/* ======================================================
    CARGAR DATOS INICIALES
 ====================================================== */
 
@@ -566,6 +604,7 @@ async function loadInitialData() {
 
   renderBlowoutsTracker();
   renderWall();
+  renderStadiumsAnalytics();
 
   if (
     state.teams.length > 0
