@@ -1,5 +1,9 @@
 "use strict";
 
+import {
+  executeWithRetry
+} from "../utils/retry.js";
+
 /* ======================================================
    CONFIGURACIÓN DE LA API
 ====================================================== */
@@ -8,6 +12,25 @@ const BASE_URL = "https://worldcup26.ir";
 
 /* Tiempo máximo de espera por petición: 15 segundos */
 const REQUEST_TIMEOUT = 15000;
+
+/* ======================================================
+   MANEJADOR VISUAL DE REINTENTOS
+====================================================== */
+
+let retryHandler = null;
+
+/**
+ * Registra la función que informará los reintentos
+ * en la interfaz.
+ *
+ * @param {Function} handler Función de notificación.
+ */
+export function configureRetryHandler(handler) {
+  retryHandler =
+    typeof handler === "function"
+      ? handler
+      : null;
+}
 
 /* ======================================================
    ERROR PERSONALIZADO DE LA API
@@ -36,13 +59,13 @@ export class ApiError extends Error {
 ====================================================== */
 
 /**
- * Consulta un endpoint de la API y devuelve los datos en formato JSON.
- *
+ *  Realiza una petición individual a un endpoint
+ *  y devuelve la respuesta en formato JSON.
  * @param {string} endpoint Ruta del endpoint, por ejemplo: /get/teams.
  * @returns {Promise<object>} Datos obtenidos de la API.
  * @throws {ApiError} Cuando ocurre un error HTTP, de red o de formato.
  */
-export async function fetchFromApi(endpoint) {
+async function performRequest(endpoint) {
   const controller = new AbortController();
 
   const timeoutId = setTimeout(() => {
@@ -90,6 +113,48 @@ export async function fetchFromApi(endpoint) {
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+/* ======================================================
+   SOLICITUD CON REINTENTOS
+====================================================== */
+
+/**
+ * Consulta un endpoint y aplica backoff exponencial
+ * cuando recibe errores reintentables.
+ *
+ * @param {string} endpoint Endpoint solicitado.
+ * @returns {Promise<object>} Respuesta de la API.
+ */
+export async function fetchFromApi(endpoint) {
+  return executeWithRetry(
+    () => performRequest(endpoint),
+    {
+      maxAttempts: 4,
+      baseDelay: 1000,
+
+      onRetry: async ({
+        attempt,
+        delay,
+        status
+      }) => {
+        console.warn(
+          `Reintento ${attempt} para ${endpoint} `
+          + `en ${delay / 1000} segundos. `
+          + `Estado HTTP: ${status}.`
+        );
+
+        if (retryHandler) {
+          await retryHandler({
+            endpoint,
+            attempt,
+            delay,
+            status
+          });
+        }
+      }
+    }
+  );
 }
 
 /* ======================================================

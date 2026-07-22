@@ -120,9 +120,9 @@ export async function executeWithRetry(
           delay,
           status: error.status
         });
-      }
-
-      await wait(delay);
+      } else {
+        await wait(delay);
+        }
     }
   }
 

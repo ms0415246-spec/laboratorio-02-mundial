@@ -29,6 +29,7 @@ import {
   showWarningAlert,
   showErrorAlert,
   showOfflineAlert,
+  showRetryAlert,
   clearAlert
 } from "./ui/alerts.js";
 
@@ -37,6 +38,14 @@ import {
   getCache,
   CACHE_KEYS
 } from "./utils/cache.js";
+
+import {
+  configureRetryHandler
+} from "./api/apiClient.js";
+
+import {
+  runCountdown
+} from "./utils/retry.js";
 
 /* ======================================================
    ESTADO DE LA APLICACIÓN
@@ -224,6 +233,39 @@ function configureWindowResize() {
       closeMobileMenu();
     }
   });
+}
+
+/* ======================================================
+   INFORMAR REINTENTOS
+====================================================== */
+
+/**
+ * Muestra una cuenta regresiva antes del siguiente
+ * intento automático.
+ *
+ * @param {object} retryData Datos del reintento.
+ */
+async function handleApiRetry({
+  endpoint,
+  attempt,
+  delay,
+  status
+}) {
+  await runCountdown(
+    delay,
+    (seconds) => {
+      showRetryAlert(
+        alertsContainer,
+        seconds,
+        status
+      );
+    }
+  );
+
+  console.log(
+    `Ejecutando intento ${attempt + 1} `
+    + `para ${endpoint}.`
+  );
 }
 
 /* ======================================================
@@ -550,6 +592,8 @@ async function init() {
   configureMobileMenu();
   configureWindowResize();
   configureTeamSelector();
+
+  configureRetryHandler(handleApiRetry);
 
   showScreen("inicio");
 
