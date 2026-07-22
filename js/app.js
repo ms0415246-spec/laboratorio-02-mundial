@@ -263,9 +263,9 @@ async function handleApiRetry({
   );
 
   console.log(
-    `Ejecutando intento ${attempt + 1} `
-    + `para ${endpoint}.`
-  );
+  `Ejecutando intento ${attempt} `
+  + `para ${endpoint}.`
+);
 }
 
 /* ======================================================
