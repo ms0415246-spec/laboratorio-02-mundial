@@ -1,5 +1,23 @@
 "use strict";
 
+import { getTeams } from "./services/teamsService.js";
+
+import {
+  populateTeamsSelector,
+  showTeamsLoadingState,
+  showTeamsErrorState,
+  getSelectedTeamId
+} from "./ui/selectors.js";
+
+/* ======================================================
+   ESTADO DE LA APLICACIÓN
+====================================================== */
+
+const state = {
+  teams: [],
+  selectedTeamId: null
+};
+
 /* ======================================================
    SELECTORES DEL DOM
 ====================================================== */
@@ -18,6 +36,8 @@ const openScreenButtons = document.querySelectorAll(
 
 const menuButton = document.getElementById("menuButton");
 const mainNavigation = document.getElementById("mainNavigation");
+const teamSelect = document.getElementById("teamSelect");
+const apiStatus = document.getElementById("apiStatus");
 
 /* ======================================================
    MOSTRAR UNA PANTALLA
@@ -170,19 +190,102 @@ function configureWindowResize() {
 }
 
 /* ======================================================
+   CARGAR EQUIPOS
+====================================================== */
+
+/**
+ * Consulta los equipos y llena el selector.
+ */
+async function loadTeams() {
+  showTeamsLoadingState(teamSelect);
+
+  updateApiStatus(
+    "Cargando equipos desde la API..."
+  );
+
+  try {
+    const teams = await getTeams();
+
+    state.teams = teams;
+
+    populateTeamsSelector(
+      teamSelect,
+      state.teams
+    );
+
+    updateApiStatus(
+      `${state.teams.length} equipos cargados correctamente.`
+    );
+  } catch (error) {
+    console.error(
+      "Error al cargar los equipos:",
+      error
+    );
+
+    showTeamsErrorState(teamSelect);
+
+    updateApiStatus(
+      "No fue posible cargar los equipos."
+    );
+  }
+}
+
+/* ======================================================
+   EVENTO DEL SELECTOR DE EQUIPOS
+====================================================== */
+
+/**
+ * Guarda el identificador del equipo seleccionado.
+ */
+function configureTeamSelector() {
+  teamSelect.addEventListener("change", () => {
+    const selectedTeamId =
+      getSelectedTeamId(teamSelect);
+
+    state.selectedTeamId = selectedTeamId;
+
+    if (!selectedTeamId) {
+      console.log("No hay un equipo seleccionado.");
+      return;
+    }
+
+    console.log(
+      "Equipo seleccionado:",
+      selectedTeamId
+    );
+  });
+}
+
+/* ======================================================
+   ESTADO GENERAL DE LA API
+====================================================== */
+
+/**
+ * Actualiza el mensaje del panel de estado.
+ *
+ * @param {string} message Mensaje que se mostrará.
+ */
+function updateApiStatus(message) {
+  apiStatus.textContent = message;
+}
+
+/* ======================================================
    INICIALIZACIÓN
 ====================================================== */
 
 /**
  * Inicia las funciones básicas de la aplicación.
  */
-function init() {
+async function init() {
   configureNavigationButtons();
   configureOpenScreenButtons();
   configureMobileMenu();
   configureWindowResize();
+  configureTeamSelector();
 
   showScreen("inicio");
+
+  await loadTeams();
 }
 
 /* Punto de entrada de la aplicación */
