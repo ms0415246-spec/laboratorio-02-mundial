@@ -331,7 +331,7 @@ function createBlowoutCard(game, teams) {
       ? homeTeam
       : awayTeam;
 
-  const formattedDate = formatMatchDate(
+  const formattedDate = formatDateTime(
     game.local_date
   );
 
@@ -893,7 +893,7 @@ function createDrawMatchHtml(game, teams) {
     game.away_score ?? 0
   );
 
-  const formattedDate = formatMatchDate(
+  const formattedDate = formatDateTime(
     game.local_date
   );
 
