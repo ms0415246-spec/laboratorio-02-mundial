@@ -24,6 +24,13 @@ import {
   showEmptyCardsState
 } from "./ui/cards.js";
 
+import {
+  showSuccessAlert,
+  showWarningAlert,
+  showErrorAlert,
+  clearAlert
+} from "./ui/alerts.js";
+
 /* ======================================================
    ESTADO DE LA APLICACIÓN
 ====================================================== */
@@ -57,6 +64,9 @@ const teamSelect = document.getElementById("teamSelect");
 const apiStatus = document.getElementById("apiStatus");
 const championRouteResults = document.getElementById(
   "championRouteResults"
+);
+const alertsContainer = document.getElementById(
+  "alertsContainer"
 );
 
 /* ======================================================
@@ -219,10 +229,6 @@ function configureWindowResize() {
 async function loadTeams() {
   showTeamsLoadingState(teamSelect);
 
-  updateApiStatus(
-    "Cargando equipos desde la API..."
-  );
-
   try {
     const teams = await getTeams();
 
@@ -232,20 +238,19 @@ async function loadTeams() {
       teamSelect,
       state.teams
     );
-
-    updateApiStatus(
-      `${state.teams.length} equipos cargados correctamente.`
-    );
   } catch (error) {
     console.error(
       "Error al cargar los equipos:",
       error
     );
 
+    state.teams = [];
+
     showTeamsErrorState(teamSelect);
 
-    updateApiStatus(
-      "No fue posible cargar los equipos."
+    showErrorAlert(
+      alertsContainer,
+      "No fue posible cargar los equipos. El selector permanecerá deshabilitado."
     );
   }
 }
@@ -273,6 +278,11 @@ async function loadGames() {
     );
 
     state.games = [];
+
+    showErrorAlert(
+      alertsContainer,
+      "No fue posible cargar los partidos. Algunas pantallas no podrán mostrar resultados."
+    );
   }
 }
 
@@ -299,6 +309,11 @@ async function loadStadiums() {
     );
 
     state.stadiums = [];
+
+    showWarningAlert(
+      alertsContainer,
+      "Los estadios no están disponibles. Los partidos se mostrarán con información incompleta."
+    );
   }
 }
 
@@ -313,6 +328,8 @@ async function loadStadiums() {
  * de uno no elimine los datos obtenidos de los demás.
  */
 async function loadInitialData() {
+  clearAlert(alertsContainer);
+
   updateApiStatus(
     "Cargando información del Mundial 2026..."
   );
@@ -326,6 +343,17 @@ async function loadInitialData() {
   updateApiStatus(
     createLoadedDataMessage()
   );
+
+  if (
+    state.teams.length > 0
+    && state.games.length > 0
+    && state.stadiums.length > 0
+  ) {
+    showSuccessAlert(
+      alertsContainer,
+      "La información principal del Mundial 2026 se cargó correctamente."
+    );
+  }
 }
 
 /**
