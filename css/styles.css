@@ -1207,6 +1207,126 @@ select:focus-visible {
 }
 
 /* ======================================================
+   TARJETAS DEL MURO
+====================================================== */
+
+.wall-card {
+  display: grid;
+  grid-template-columns:
+    70px
+    minmax(180px, 1.4fr)
+    minmax(130px, 0.7fr)
+    minmax(180px, 1fr);
+
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1.15rem 1.3rem;
+
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-medium);
+
+  box-shadow: var(--shadow-small);
+
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+
+  animation: matchCardAppear 0.35s ease both;
+}
+
+.wall-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-medium);
+}
+
+.wall-card__position {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--color-secondary);
+
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  border-radius: 50%;
+
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.wall-card__team {
+  min-width: 0;
+}
+
+.wall-card__team h3 {
+  color: var(--color-text);
+
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.wall-card__team p {
+  margin-top: 0.25rem;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.wall-card__stat,
+.wall-card__opponent {
+  min-height: 68px;
+  padding-left: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  border-left: 1px solid var(--color-border);
+}
+
+.wall-card__stat small,
+.wall-card__opponent small {
+  display: block;
+  margin-bottom: 0.2rem;
+
+  color: var(--color-text-muted);
+
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.wall-card__stat strong {
+  color: var(--color-primary);
+
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.wall-card__opponent p {
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* ======================================================
    GRÁFICA DE ESTADIOS
 ====================================================== */
 
@@ -1280,6 +1400,22 @@ select:focus-visible {
 
   .projects-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+    .wall-card {
+    grid-template-columns:
+      60px
+      minmax(160px, 1fr)
+      minmax(120px, 0.7fr);
+  }
+
+  .wall-card__opponent {
+    grid-column: 2 / -1;
+    padding-top: 0.8rem;
+    padding-left: 0;
+
+    border-left: none;
+    border-top: 1px solid var(--color-border);
   }
 }
 
@@ -1412,6 +1548,43 @@ select:focus-visible {
 
   .blowout-card__content {
     padding: 1.15rem;
+  }
+
+    .wall-card {
+    grid-template-columns: 52px 1fr;
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .wall-card__position {
+    width: 46px;
+    height: 46px;
+    font-size: 1.45rem;
+  }
+
+  .wall-card__team h3 {
+    font-size: 1.4rem;
+  }
+
+  .wall-card__stat,
+  .wall-card__opponent {
+    grid-column: 1 / -1;
+
+    min-height: auto;
+    padding: 0.8rem 0 0;
+
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .wall-card__stat {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wall-card__stat small {
+    margin-bottom: 0;
   }
 }
 
