@@ -5,7 +5,8 @@ import { getTeams } from "./services/teamsService.js";
 import {
   getGames,
   getGamesByTeam,
-  getBlowoutGames
+  getBlowoutGames,
+  groupDrawsByGroup
 } from "./services/gamesService.js";
 
 import {
@@ -30,6 +31,7 @@ import {
   renderBlowoutCards,
   renderWallRanking,
   renderStadiumAnalytics,
+  renderDrawsByGroup,
   showCardsLoadingState,
   showEmptyCardsState
 } from "./ui/cards.js";
@@ -111,6 +113,10 @@ const wallRankingContainer =
 
   const stadiumsChart = document.getElementById(
   "stadiumsChart"
+);
+
+const drawsResults = document.getElementById(
+  "drawsResults"
 );
 
 /* ======================================================
@@ -575,6 +581,36 @@ function renderStadiumsAnalytics() {
 }
 
 /* ======================================================
+   RENDERIZAR RADAR DE EMPATES
+====================================================== */
+
+/**
+ * Agrupa y muestra los partidos finalizados que terminaron
+ * con el mismo marcador.
+ */
+function renderDrawsRadar() {
+  if (state.games.length === 0) {
+    showEmptyCardsState(
+      drawsResults,
+      "Empates no disponibles",
+      "No fue posible obtener los partidos desde la API."
+    );
+
+    return;
+  }
+
+  const groupedDraws = groupDrawsByGroup(
+    state.games
+  );
+
+  renderDrawsByGroup(
+    drawsResults,
+    groupedDraws,
+    state.teams
+  );
+}
+
+/* ======================================================
    CARGAR DATOS INICIALES
 ====================================================== */
 
@@ -605,6 +641,7 @@ async function loadInitialData() {
   renderBlowoutsTracker();
   renderWall();
   renderStadiumsAnalytics();
+  renderDrawsRadar();
 
   if (
     state.teams.length > 0
