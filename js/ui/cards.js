@@ -271,3 +271,154 @@ function formatMatchDate(localDate) {
     timeStyle: "short"
   }).format(date);
 }
+
+/* ======================================================
+   RENDERIZAR TARJETAS DE GOLEADAS
+====================================================== */
+
+/**
+ * Muestra las tarjetas de partidos terminados con una
+ * diferencia igual o superior a tres goles.
+ *
+ * @param {HTMLElement} container Contenedor de resultados.
+ * @param {Array} games Lista de goleadas.
+ * @param {Array} teams Lista de equipos.
+ */
+export function renderBlowoutCards(
+  container,
+  games,
+  teams
+) {
+  if (!(container instanceof HTMLElement)) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!Array.isArray(games) || games.length === 0) {
+    showEmptyCardsState(
+      container,
+      "No se encontraron goleadas",
+      "No hay partidos finalizados con una diferencia de tres o más goles."
+    );
+
+    return;
+  }
+
+  games.forEach((game) => {
+    const card = createBlowoutCard(
+      game,
+      teams
+    );
+
+    container.appendChild(card);
+  });
+}
+
+/* ======================================================
+   CREAR TARJETA DE GOLEADA
+====================================================== */
+
+/**
+ * Construye una tarjeta individual para una goleada.
+ *
+ * @param {object} game Datos del partido.
+ * @param {Array} teams Lista de equipos.
+ * @returns {HTMLElement} Tarjeta construida.
+ */
+function createBlowoutCard(game, teams) {
+  const homeTeam = findTeamById(
+    teams,
+    game.home_team_id
+  );
+
+  const awayTeam = findTeamById(
+    teams,
+    game.away_team_id
+  );
+
+  const homeScore = Number(
+    game.home_score ?? 0
+  );
+
+  const awayScore = Number(
+    game.away_score ?? 0
+  );
+
+  const goalDifference = Math.abs(
+    homeScore - awayScore
+  );
+
+  const winnerTeam =
+    homeScore > awayScore
+      ? homeTeam
+      : awayTeam;
+
+  const formattedDate = formatMatchDate(
+    game.local_date
+  );
+
+  const card = document.createElement("article");
+
+  card.className = "blowout-card";
+
+  card.innerHTML = `
+    <div class="blowout-card__stripe"></div>
+
+    <div class="blowout-card__content">
+      <div class="blowout-card__header">
+        <div>
+          <p class="blowout-card__round">
+            ${game.stage ?? game.round ?? "Partido finalizado"}
+          </p>
+
+          <h3 class="blowout-card__title">
+            ${getTeamName(homeTeam)}
+            <span>vs</span>
+            ${getTeamName(awayTeam)}
+          </h3>
+        </div>
+
+        <span class="blowout-card__difference">
+          +${goalDifference}
+        </span>
+      </div>
+
+      <div class="blowout-card__score">
+        <div class="blowout-card__team">
+          <span>${getTeamName(homeTeam)}</span>
+          <strong>${homeScore}</strong>
+        </div>
+
+        <span class="blowout-card__separator">–</span>
+
+        <div class="blowout-card__team">
+          <strong>${awayScore}</strong>
+          <span>${getTeamName(awayTeam)}</span>
+        </div>
+      </div>
+
+      <div class="blowout-card__details">
+        <div>
+          <small>Ganador</small>
+          <p>${getTeamName(winnerTeam)}</p>
+        </div>
+
+        <div>
+          <small>Diferencia</small>
+          <p>
+            ${goalDifference}
+            ${goalDifference === 1 ? "gol" : "goles"}
+          </p>
+        </div>
+
+        <div>
+          <small>Fecha</small>
+          <p>${formattedDate}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return card;
+}
